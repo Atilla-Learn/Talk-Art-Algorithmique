@@ -1,0 +1,177 @@
+\documentclass[12pt,c]{beamer}
+\usepackage{graphicx}
+\setbeameroption{hide notes}
+\setbeamertemplate{note page}[plain]
+% get rid of junk
+\usetheme{Rochester}
+\definecolor{orange-ish}{RGB}{255,86,34}
+\setbeamercolor{structure}{fg=orange-ish}
+\beamertemplatenavigationsymbolsempty
+\hypersetup{pdfpagemode=UseNone} % don't show bookmarks on initial view
+% font
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[]{algorithm2e}
+
+\setbeamerfont{note page}{family*=pplx,size=\footnotesize} % Palatino for notes
+% "TeX Gyre Heros can be used as a replacement for Helvetica"
+% In Unix, unzip the following into ~/.fonts
+% In Mac, unzip it, double-click the .otf files, and install using "FontBook"
+% http://www.gust.org.pl/projects/e-foundry/tex-gyre/heros/qhv2.004otf.zip
+% named colors
+\definecolor{offwhite}{RGB}{249,242,215}
+\definecolor{foreground}{RGB}{255,255,255}
+\definecolor{background}{RGB}{30,30,30}
+\definecolor{title}{RGB}{0,0,0}
+\definecolor{gray}{RGB}{155,155,155}
+\definecolor{subtitle}{RGB}{0,0,0}
+\definecolor{hilight}{RGB}{102,0,0}
+\definecolor{vhilight}{RGB}{255,111,207}
+\definecolor{lolight}{RGB}{155,155,155}
+%\definecolor{green}{RGB}{125,250,125}
+% use those colors
+\setbeamercolor{titlelike}{fg=title}
+\setbeamercolor{subtitle}{fg=subtitle}
+\setbeamercolor{institute}{fg=gray}
+\setbeamercolor{normal text}{fg=foreground,bg=background}
+\setbeamercolor{item}{fg=foreground} % color of bullets
+\setbeamercolor{subitem}{fg=gray}
+\setbeamercolor{tableofcontents}{fg = hilight}
+\setbeamercolor{itemize/enumerate subbody}{fg=gray}
+\setbeamertemplate{itemize subitem}{{\textendash}}
+\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+\setbeamerfont{itemize/enumerate subitem}{size=\footnotesize}
+% page number
+\setbeamertemplate{footline}{%
+\raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[20pt]{\color{gray}
+\scriptsize\insertframenumber}}}\hspace*{5pt}}
+% add a bit of space at the top of the notes page
+\addtobeamertemplate{note page}{\setlength{\parskip}{12pt}}
+% a few macros
+
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ig}{\includegraphics}
+\renewcommand{\i}{\item[$\cdot$]}
+\newcommand{\subt}[1]{{\footnotesize \color{subtitle} {#1}}}
+\newcommand{\transti}[1]{\begin{frame} \begin{block}{#1}   \end{block} \end{frame}}
+\newcommand{\N}{\mathbb{N}}
+% title info
+\title{Algorithmic art}
+\subtitle{Talktilla}
+\date{December 11, 2015}
+\author{Alexandre Terrien}
+\begin{document}
+\maketitle
+
+\section{Introduction to algorithmic art}
+\begin{frame}{Credits}
+TIPE subject, supervised by Stefan Bornhoffen\\
+Participants : 
+\bi
+\i Vincent Destree
+\i Marguerite-Charlotte Peron
+\i Maxime Sautereau
+\i Alexandre Terrien
+\i Alexandre Vincent
+\ei
+\end{frame}
+\begin{frame}{Computer art}
+\begin{block}{Definition}
+Art where a computer is part of the production or displaying of the artwork.
+\end{block}
+Examples : 
+\bi 
+\i Computer-Generated Imagery
+\i Video games
+\i Interactive Art
+\i Generative art
+\ei
+\end{frame}
+\begin{frame}{Algorithmic art}
+\begin{block}{Definition}
+Art (mainly visual) where the artwork is produced by an algorithm. The artist usually doesn't take part in the generation.
+\end{block}
+\end{frame}
+\begin{frame}{Fractals}
+\begin{figure}
+\begin{center}
+		\ig[scale=0.35]{mandlebrot.jpg}
+		\caption{Mandlebrot set, created by Wolfgang Beyer with the program Ultra Fractal 3.}
+\end{center}
+\end{figure}
+\end{frame}
+\begin{frame}{L-systems}
+\begin{figure}
+	\ig[scale=0.18]{lsys.png}
+	\caption{L-system modelisation by Sakurambo}
+\end{figure}
+\end{frame}
+\begin{frame}{Our realisation}
+Many known algorithms/models to produce such work, so the interesting part is to create an original algorithm.\\[0.5cm]
+Representation of waves\\
+\bi 
+\i Propagation
+\i Interactions
+\i Colours
+\i Rainbows !
+\ei
+\end{frame}
+\section{Technicalities}
+\begin{frame}{Data structures : Point}
+Attributes : 
+\bi 
+\i Red channel
+\i Green channel
+\i Blue channel
+\i Alpha channel
+\ei
+Methods : 
+\bi 
+\i Associated setters and getters
+\i Render a point
+\ei
+\end{frame}
+\begin{frame}{Representation}
+Screen represented by matrix of points, each element of the array is linked to a pixel.\\
+We iterate over the matrix and compute values for one or more of the channel (in our case, the transparency)
+\end{frame}
+\begin{frame}{General algorithm}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{buffer, buffer_w, buffer_h}
+\While{$\neg\text{ }stopCondition()$}{
+$source \leftarrow randomPoint()$\\
+	\For{$i\leftarrow 0$ \KwTo $buffer_w$}{
+		\For{$i\leftarrow 0$ \KwTo $buffer_h$}{
+			$d \leftarrow dist(buffer[i,j], source)$\\
+			$buffer[i,j].alpha \leftarrow f(buffer[i,j].alpha, d)$
+		}
+	}
+	$render(buffer)$
+}
+\end{algorithm}
+\end{frame}
+\begin{frame}{Choice of function}
+\bi
+\i Variation of alpha (transparency) value. 
+\i Value between 0 and 255
+\i Representation of waves $\Rightarrow$ sinus and cosinus
+\i Apparition of previous alpha value (interactions)
+\i Random parameters for each source
+\ei
+\end{frame}
+\begin{frame}{Results}
+\ig[width=1\textwidth]{inter.png}
+\end{frame}
+\begin{frame}{Results}
+\ig[width=\textwidth]{eye.png}
+\end{frame}
+\begin{frame}{Results}
+\ig[width=\textwidth]{bubble.png}
+\end{frame}
+\begin{frame}{Results}
+\ig[width=\textwidth]{raindrop.png}
+\end{frame}
+\end{document}
